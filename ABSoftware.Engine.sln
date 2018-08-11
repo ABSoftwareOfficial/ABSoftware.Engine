@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABSoftware.Engine.Testing", "ABSoftware.Engine.Testing\ABSoftware.Engine.Testing.csproj", "{56711DCD-4EF8-4C83-9C6B-15BBCEEBA5F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABSoftware.Engine", "ABSoftware.Engine\ABSoftware.Engine.csproj", "{618E5D78-B405-4564-BC7A-6E6065299951}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56711DCD-4EF8-4C83-9C6B-15BBCEEBA5F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56711DCD-4EF8-4C83-9C6B-15BBCEEBA5F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56711DCD-4EF8-4C83-9C6B-15BBCEEBA5F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56711DCD-4EF8-4C83-9C6B-15BBCEEBA5F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{618E5D78-B405-4564-BC7A-6E6065299951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{618E5D78-B405-4564-BC7A-6E6065299951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{618E5D78-B405-4564-BC7A-6E6065299951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{618E5D78-B405-4564-BC7A-6E6065299951}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D72968A5-022A-4B61-B264-349419E480D0}
+	EndGlobalSection
+EndGlobal

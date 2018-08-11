@@ -1,0 +1,36 @@
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csprojAssemblyReference.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\App.g.cs
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe.config
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.pdb
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.dll
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.pdb
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.g.cs
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.lref
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.baml
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.g.resources
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.Properties.Resources.resources
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.GenerateResource.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.CoreCompileInputs.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.CopyComplete
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.exe
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.pdb
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe.config
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.pdb
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.dll
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.pdb
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csprojResolveAssemblyReference.cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.g.cs
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\App.g.cs
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.lref
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.baml
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.g.resources
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.Properties.Resources.resources
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.GenerateResource.Cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.CoreCompileInputs.cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.exe
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.pdb
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABParse.dll

@@ -1,0 +1,26 @@
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\bin\Debug\ABSoftware.Engine.dll
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\bin\Debug\ABSoftware.Engine.pdb
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\CodeTextBox.g.cs
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine_MarkupCompile.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine_MarkupCompile.lref
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\CodeTextBox.baml
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.g.resources
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.csproj.CoreCompileInputs.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.dll
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.pdb
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ColoredTextBox.baml
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\bin\Debug\ABSoftware.Engine.dll
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\bin\Debug\ABSoftware.Engine.pdb
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\CodeTextBox.g.cs
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine_MarkupCompile.cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine_MarkupCompile.lref
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\CodeTextBox.baml
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ColoredTextBox.baml
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.g.resources
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.csproj.CoreCompileInputs.cache
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.dll
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.pdb
+C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.csprojResolveAssemblyReference.cache
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.csproj.CopyComplete
+I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine\obj\Debug\ABSoftware.Engine.csprojAssemblyReference.cache
