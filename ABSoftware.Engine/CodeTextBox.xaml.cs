@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ABSoftware.Engine
 {
@@ -24,14 +30,24 @@ namespace ABSoftware.Engine
         #region Private Properties
 
         /// <summary>
-        /// If, when highlighting, we've decided on a start for a highlight.
-        /// </summary>
-        internal bool decidedStart = false;
-
-        /// <summary>
         /// All of the locations that are highlighted.
         /// </summary>
         internal List<CodeTextBoxHighlight> highlights = new List<CodeTextBoxHighlight>();
+
+        /// <summary>
+        /// The start of where we need to highlight.
+        /// </summary>
+        internal TextPointer HighlightStart;
+
+        /// <summary>
+        /// The end of where we need to highlight.
+        /// </summary>
+        internal TextPointer HighlightEnd;
+
+        /// <summary>
+        /// Whether the start/end for highlighting has been decided yet.
+        /// </summary>
+        internal bool chosenStartEnd;
 
         private int lastLineCount;
 
@@ -46,6 +62,17 @@ namespace ABSoftware.Engine
             get
             {
                 return new TextRange(txtCode.Document.ContentStart, txtCode.Document.ContentEnd).Text;
+            }
+        }
+
+        /// <summary>
+        /// The text within this CodeTextBox - with no line breaks!
+        /// </summary>
+        public string TextNoLineBreaks
+        {
+            get
+            {
+                return new TextRange(txtCode.Document.ContentStart, txtCode.Document.ContentEnd).Text.Replace("\r\n", "");
             }
         }
 
@@ -84,6 +111,8 @@ namespace ABSoftware.Engine
         /// Whether we're already waiting a second for the finishtextchanged event.
         /// </summary>
         private bool alreadyWaiting;
+
+        private DateTime lastDTime;
         #endregion
 
         #region Managed Methods
@@ -91,18 +120,26 @@ namespace ABSoftware.Engine
         {
             InitializeComponent();
 
+            // Allow the line numbers to scroll.
             LineNumbersScroll.CanContentScroll = true;
         }
 
         private async void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Don't bother, If there were no changes.
+            if (e.Changes.Count == 0)
+                return;
+
             // Set the line numbers now.
             // The total number of lines.
             var lineCount = LineCount;
 
-            // We only want to change the line numbers if the totaline number has changed.
+            // We only want to change the line numbers if the total number of lines has changed.
             if (lineCount != lastLineCount)
             {
+                // The process is fairly simple for the line numbers.
+                // Just add a massive TextBlock, with all the line numbers.
+                // And then sync up its scroll with the scroll of the TextBox.
 
                 // Update the last total number of lines we have.
                 lastLineCount = lineCount;
@@ -121,40 +158,144 @@ namespace ABSoftware.Engine
                     LineNumbers.Text += (i + 1) + Environment.NewLine;
             }
 
-            // If we are already waiting a second for the FinishTextChanged event.
-            if (alreadyWaiting)
+            // Don't continue if the document is null.
+            if (txtCode.Document == null)
                 return;
-            else
+
+            // Now, go through each change and decide the lowest and highest blocks.
+            foreach (TextChange change in e.Changes)
             {
-                // Make it so we're waiting.
-                alreadyWaiting = true;
+                // Get this block's start.
+                var start = LastIndexOf(txtCode.Document.ContentStart.GetPositionAtOffset(change.Offset), TextHighlighter.BlockStart) ?? txtCode.Document.ContentStart;
 
-                // Wait a second - before executing the FinishTextChanged event.
-                await Task.Delay(1000);
+                // Get this block's end.
+                var end = IndexOf(txtCode.Document.ContentStart.GetPositionAtOffset(change.Offset + change.AddedLength), TextHighlighter.BlockEnd) ?? txtCode.Document.ContentEnd;
 
-                // We aren't waiting anymore
-                alreadyWaiting = false;
+                // Keep track of the position this was done, so that we only need to process a section in the FinishTextChanged.
+                // If we haven't decided on anything yet, make the start/end the start/end.
+                if (!chosenStartEnd)
+                {
+                    // Set the start to the last "ObjectStart" - at the start of this "block".
+                    HighlightStart = start;
 
-                // Call to the finish text changed event - which happens every second of typing.
-                TextBox_FinishTextChanged(sender, e);
+                    // Set the end to the end of where the text was changed - at the end of the line.
+                    HighlightEnd = end;
+
+                    // We've now decided on a basic start/end - which can be changed.
+                    chosenStartEnd = true;
+                }
+                else
+                {
+                    // If this has the lowest offset so far, this needs to be the start since it's before the current start - set it to the start of the line.
+                    if (start.CompareTo(HighlightStart) < 0)
+                        HighlightStart = start;
+
+                    var rng = new TextRange(start, end);
+                    // If this has the highest offset so far, tihs needs to be the end since it's after the current end.
+                    if (end.CompareTo(HighlightEnd) > 0)
+                        HighlightEnd = end;
+                }
             }
+
+            // This is used to decide if there have been any other calls to this event in those 400ms - if so, don't do anything on this one.
+            var lastDateTime = DateTime.Now;
+            lastDTime = lastDateTime;
+
+            // The rest will happen after 400ms.
+            await Task.Delay(400);
+
+            // Now, call to the FinishTextChanged if needed - this is where all the highlighting is done.
+            if (lastDateTime == lastDTime)
+                TextBox_FinishTextChanged();
+
+            //await Task.Delay(400);
+
+            //var watch = Stopwatch.StartNew();
+
+            //// It will call the FinishTextChanged - which will run after 400ms, and will process the code - with highlighting, collapsing etc.
+            //TextBox_FinishTextChanged();
+
+            //watch.Stop();
+            //Console.WriteLine(watch.ElapsedMilliseconds);
         }
 
-        private void TextBox_FinishTextChanged(object sender, TextChangedEventArgs e)
+        private TextPointer IndexOf(TextPointer pointerArg, char ch)
         {
-            // The process is fairly simple for the line numbers.
-            // Just add a massive TextBlock, with all the line numbers.
-            // And then sync up its scroll with the scroll of the TextBox.
+            // Store whether we found the character.
+            bool found = false;
 
+            // Store the character it's on in the run it's in, so that we can get an exact TextPointer position.
+            var i = 0;
+
+            // The current position we're at.
+            var pointer = pointerArg;
+
+            // Keep going if we haven't found it - or we've reached the end.
+            while (!found && pointer.CompareTo(txtCode.Document.ContentEnd) < 0)
+            {
+                // Go to the next symbol.
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+
+                // Get the current context - this is essentially what this symbol means.
+                var context = pointer.GetPointerContext(LogicalDirection.Backward);
+
+                // If this is a run - that's where the text is so we can check it!
+                if (context == TextPointerContext.ElementStart && pointer.Parent is Run run)
+                    for (i = 0; i < run.Text.Length; i++)
+                        if (run.Text[i] == ch)
+                            found = true;
+            }
+
+            // Return whether we found the character.
+            return (found) ? pointer.GetPositionAtOffset(i) : null;
+        }
+
+        private TextPointer LastIndexOf(TextPointer pointerArg, char ch)
+        {
+            // Store whether we found the character.
+            bool found = false;
+
+            // Store the character it's on in the run it's in, so that we can get an exact TextPointer position.
+            var i = 0;
+
+            // The current position we're at.
+            var pointer = pointerArg;
+
+            // Keep going if we haven't found it - or we've reached the end.
+            while (!found && pointer.CompareTo(txtCode.Document.ContentStart) > 0)
+            {
+                // Go to the next symbol.
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Backward);
+
+                // Get the current context - this is essentially what this symbol means.
+                var context = pointer.GetPointerContext(LogicalDirection.Backward);
+
+                // If this is a run - that's where the text is so we can check it!
+                if (context == TextPointerContext.ElementStart && pointer.Parent is Run run)
+                    for (i = run.Text.Length - 1; i >= 0; i--)
+                        if (run.Text[i] == ch)
+                            found = true;
+            }
+
+            // Return whether we found the character.
+            return (found) ? pointer.GetPositionAtOffset(i) : null;
+        }
+
+        private void TextBox_FinishTextChanged()
+        {
             // Don't bother if the document is null.
             if (txtCode.Document == null)
                 return;
 
+            // We want to make sure we only act upon the section where it was changed.
+            //HighlightStart = txtCode.Document.ContentStart.GetPositionAtOffset(e.Changes.FirstOrDefault().Offset);
+            //HighlightEnd = txtCode.Document.ContentStart.GetPositionAtOffset(e.Changes.Last().Offset);
+
             // Make sure we remove the text changed event, so that we don't cause an endless loop!
             txtCode.TextChanged -= TextBox_TextChanged;
 
-            // Make sure that we work in just plaintext - we'll color it ourselves.
-            new TextRange(txtCode.Document.ContentStart, txtCode.Document.ContentEnd).ClearAllProperties();
+            // Make sure that we remove all styling to where we want to highlight - we'll color it ourselves.
+            new TextRange(HighlightStart, HighlightEnd).ClearAllProperties();
 
             // Highlight the current text.
             HighlightText();
@@ -181,16 +322,23 @@ namespace ABSoftware.Engine
         //    return formattedText.Height + txtCode.FontSize * 2;
         //}
 
+        /// <summary>
+        /// The current position of the highlighter in its run.
+        /// </summary>
+        internal int currentPos;
+
+        /// <summary>
+        /// The last run that the highlighter was on.
+        /// </summary>
+        internal Run lastRun;
+
         public void HighlightText()
         {
-            // We'll want to make sure we keep track of the index of the run we're on.
-            var rIndex = 0;
-
-            // Clear out the old highlights
-            highlights.Clear();
+            // Clear out the old highlights within the correct block.
+            highlights.RemoveAll(i => HighlightStart.CompareTo(i.Range.Start) >= 0 && HighlightEnd.CompareTo(i.Range.Start) < 0);
 
             // Create a pointer to the start - which we will increment.
-            CurrentPointer = txtCode.Document.ContentStart;
+            CurrentPointer = HighlightStart;
 
             // Initilize the parser.
             TextHighlighter.Init();
@@ -198,11 +346,13 @@ namespace ABSoftware.Engine
             // Set the textbox within the parser to this textbox.
             TextHighlighter.TextBox = this;
 
-            // Set the text for the highlighter, the parser deals with it as a character array - so we have to make sure we convert the string to that.
-            TextHighlighter.Text = ABParse.ABParser.ToCharArray(Text);
+            // Reset text for parser instead of setting, b/c we'll dynamically set it as we come across each run,
+            // so that the whitespace detection (which allows anything at the end) will allow tokens at the end of a run!
+            //TextHighlighter.Text = ABParse.ABParser.ToCharArray(TextNoLineBreaks);
+            TextHighlighter.Text = new char[TextNoLineBreaks.Length];
 
             // Move forward through all the symbols, and act where all the text is...
-            while (CurrentPointer != null && CurrentPointer.CompareTo(txtCode.Document.ContentEnd) < 0)
+            while (CurrentPointer.CompareTo(HighlightEnd) < 0)
             {
                 // We're going to use ABParser, which is another ABSoftware product capable of parsing a test JSON string (55 characters) within 0.0232ms!
                 // However, we can't use it the way it's intended (with a string) because this RichTextBox has a BUNCH of other symbols added.
@@ -211,108 +361,49 @@ namespace ABSoftware.Engine
                 // Get the current context - this is essentially what this symbol means.
                 var context = CurrentPointer.GetPointerContext(LogicalDirection.Backward);
 
-                // If this is a piece of text - we can process it.
-                if (context == TextPointerContext.ElementStart && CurrentPointer.Parent is Run)
+                // If this is a run - that's where the text is so we can process it!
+                if (context == TextPointerContext.ElementStart && CurrentPointer.Parent is Run run)
                 {
-                    // We'll store the current run so that we can detect when we've gone onto another run.
-                    var lastPos = CurrentPointer;
+                    // Just in case the "Highlight" methods execute too late, we'll store this run in a variable.
+                    lastRun = run;
 
-                    // We need to move the pointer backward based on the index of the current run.
-                    //for (int i = 0; i < rIndex; i++)
-                    //    CurrentPointer = CurrentPointer.GetNextInsertionPosition(LogicalDirection.Backward);
+                    // Add this run as text to the parser - the parser works with character arrays so we need to make sure we convert it.
+                    ABParse.ABParser.ToCharArray(run.Text).CopyTo(TextHighlighter.Text, TextHighlighter.CurrentLocation);
 
-                    // Store the length in a variable to add to the offset at the end of this run.
-                    //var length = (CurrentPointer.Parent as Run).Text.Length;
-
-                    // Process each character while we're still in a run.
-                    while (CurrentPointer != null && CurrentPointer.Parent is Run)
+                    // Go through all the text in this run - this is where the heart of the highlighter is.
+                    for (currentPos = 0; currentPos < run.Text.Length; currentPos++)
                     {
                         // Process this character.
-                        var result = TextHighlighter.ProcessChar(false);
-
-                        // If it's decided on a token start (it isn't its "unset" value)... Make sure we set THIS offset as the start offset.
-                        if (TextHighlighter.PossibleTokenStart != -1 && !decidedStart)
-                        {
-                            // In order to stop the start being set every character, we'll say that we've decided on a start.
-                            decidedStart = true;
-
-                            // Make sure we set the start of the token.
-                            TextHighlighter.TokenStart = TextHighlighter.PossibleTokenStart;
-                        }
-
-                        // If, however, it is unset again, and we had already decided on a start... Then that start isn't valid anymore
-                        else if (TextHighlighter.PossibleTokenStart == -1 && decidedStart)
-                            decidedStart = false;
-
-                        // The events require the pointer to be one character backwards - if it can be.
-                        //if (TextHighlighter.CurrentLocation - offset - 1 >= 0)
-                        //CurrentPointer = (CurrentPointer.Parent as Run).ContentStart.GetPositionAtOffset(TextHighlighter.CurrentLocation - offset - 1);
+                        var result = TextHighlighter.ProcessChar(true);
 
                         // Also, we passed false to the process character method because we wanted the events to execute AFTER getting
                         // the start of the token, so, NOW we'll check the events - if we should.
-                        if (!result)
-                            TextHighlighter.ProcessBuiltUpTokens(true);
+                        //if (!result)
+                            //TextHighlighter.ProcessBuiltUpTokens(false);
 
-                        // If the pointer was shifted back in that - shift it forward again.
-                        //if (TextHighlighter.shiftedPointerBack)
-                        //{
-                        //    CurrentPointer = CurrentPointer.GetNextInsertionPosition(LogicalDirection.Forward);
-                        //    TextHighlighter.shiftedPointerBack = false;
-                        //}
+                        // Make sure we move on the next character in the parser - if this isn't the last one.
+                        if (TextHighlighter.CurrentLocation + 1 < TextHighlighter.Text.Length)
+                            TextHighlighter.MoveForward();
 
-                        // Make sure we move on the next character in the parser.
-                        TextHighlighter.MoveForward();
-
-                        // Just in case the CurrentPointer becomes null, we'll store a copy of it before.
-                        var oldPointer = CurrentPointer;
-
-                        // We also have to make sure the our pointer moves forward, as that's used for the start/end position and has to be accurate.
-                        CurrentPointer = CurrentPointer.GetNextInsertionPosition(LogicalDirection.Forward);
-
-                        // If the above caused CurrentPointer to become null, then we'll reset it back to what it was before and exit the loop.
-                        if (CurrentPointer == null)
-                        {
-                            CurrentPointer = oldPointer;
-                            break;
-                        }
-
-                        // Get the gap of symbols between the current position and the last.
-                        var offset = CurrentPointer.GetOffsetToPosition(lastPos);
-
-                        // If we've moved ahead more than a "symbol", make sure we shift the highlighter ahead the correct amount.
-                        if (Math.Abs(CurrentPointer.GetOffsetToPosition(lastPos)) > 1)
-                        {
-                            // Move the parser forward by the correct amount, in order to make up for any skipped characters.
-                            for (int i = 0; i < offset / 2; i++)
-                                CurrentPointer = CurrentPointer.GetNextInsertionPosition(LogicalDirection.Backward);
-                        }
-
-                        // Set the "old" position as the current one ready for the next character.
-                        lastPos = CurrentPointer;
                     }
 
-                    // Shift the current index forward.
-                    rIndex++;
+                    // We need to store the end of this run - so that the whitespace detection can allow tokens at start/ends of runs.
+                    TextHighlighter.RunStart = TextHighlighter.CurrentLocation;
 
-                    // Increment the offset, based on the length
-                    //IncrementOffset(length);
+                    // Now that we've finished with this run - which represent lines in our case, make sure we aren't highlighting the line anymore.
+                    TextHighlighter.LineHighlighted = false;
+
+                    // The currentPos is now one character too far ahead - so, if this is the end of the string, shift it back one.
+                    //if (TextHighlighter.CurrentLocation + 1 == TextHighlighter.Text.Length)
+                    //    currentPos--;
                 }
 
-                //// However, if this is the end of an empty paragraph - we want to make sure we shift the offset forward a bit.
-                //else if (CurrentPointer.Parent is Paragraph && (CurrentPointer.Parent as Paragraph).Inlines.Count == 0 && context == TextPointerContext.ElementStart)
-
-                //    // Increment the offset forward by two.
-                //    TextHighlighter.offset += 2;
-
                 // Go to the next insertion point if it isn't at a valid one.
-                CurrentPointer = CurrentPointer.GetNextInsertionPosition(LogicalDirection.Forward);
+                CurrentPointer = CurrentPointer.GetNextContextPosition(LogicalDirection.Forward);
             }
 
-            // In order to be ready for the next highlighting process, we need to make sure that it hasn't decided the start anymore.
-            decidedStart = false;
-
-            // Reset the offset.
-            TextHighlighter.offset = 0;
+            // Now that we're completely finished, we haven't chosen a start/emd yet.
+            chosenStartEnd = false;
 
             // Make sure we clean it up afterwards
             TextHighlighter.ProcessBuiltUpTokens(false);
@@ -342,22 +433,14 @@ namespace ABSoftware.Engine
             //}
         }
 
-        private void IncrementOffset(int length)
-        {
-            // Increment the offset by the correct amount - we also have to add two to it, because 
-            // the runs actually ignore the \r\n at the end, and so it's all wrong without that counting that.
-            // But, only do that if this run has something in it.
-            if (length > 0) TextHighlighter.offset += length + 2;
-        }
-
         private void ApplyHighlights()
         {
-            // Go through each highlight, applying each one.
+            // Go through each highlight, applying each one within the range we changed.
             for (int i = 0; i < highlights.Count; i++)
-            {
-                // Now, actually apply the color!
-                highlights[i].Range.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(highlights[i].Color));
-            }
+                if (highlights[i].Range.Start.CompareTo(HighlightStart) > 0 && highlights[i].Range.End.CompareTo(HighlightEnd) < 0)
+
+                    // Now, actually apply the color!
+                    highlights[i].Range.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(highlights[i].Color));
         }
 
         //internal void HighlightLine(Color clr, int startIndex)
@@ -378,16 +461,17 @@ namespace ABSoftware.Engine
 
         internal void Highlight(Color clr)
         {
-            // Don't bother if the end is null.
-            if (CurrentPointer == null)
-                return;
-
             // Create a highlight with the correct range and add it to the array - the TextRange represents what part of the RichTextBox to highlight.
-            highlights.Add(new CodeTextBoxHighlight(new TextRange(StartPointer, CurrentPointer), clr));
+            highlights.Add(new CodeTextBoxHighlight(new TextRange(StartPointer, lastRun.ContentStart.GetPositionAtOffset(currentPos)), clr));
+        }
 
-            // Now that we're finished with that highlight we don't want the main highlighter to
-            // think that it has the correct start for the next one as well.
-            decidedStart = false;
+        internal void HighlightLine(Color clr)
+        {
+            // Get the where the next line start - this will be null if there is no next line, in which case it will use the document's end.
+            var nextStart = StartPointer.GetLineStartPosition(1);
+
+            // Create a highlight up from the start to the end of the line - the TextRange represents where the RichTextBox gets highlighted.
+            highlights.Add(new CodeTextBoxHighlight(new TextRange(StartPointer, (nextStart ?? txtCode.Document.ContentEnd).GetInsertionPosition(LogicalDirection.Backward)), clr));
         }
 
         private void txtCode_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -403,7 +487,7 @@ namespace ABSoftware.Engine
 
                 // Get a TextPointer to the caret's position and insert the text into that.
                 txtCode.CaretPosition.GetInsertionPosition(LogicalDirection.Forward).InsertTextInRun("    ");
-            
+
         }
         #endregion
 

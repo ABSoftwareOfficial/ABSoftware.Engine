@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +10,12 @@ namespace ABSoftware.Engine.Testing
 {
     public class TestHighlighter : CodeTextBoxHighlighter
     {
+        public override char BlockStart => '{';
+        public override char BlockEnd => '}';
+
         public TestHighlighter()
         {
+            // Set all the tokens for C#
             Tokens = new System.Collections.ObjectModel.ObservableCollection<ABParserToken>()
             {
                 // Keywords
@@ -102,6 +105,7 @@ namespace ABSoftware.Engine.Testing
                 new ABParserToken("stackalloc", 's', 't', 'a', 'c', 'k', 'a', 'l', 'l', 'o', 'c'),
 
                 // Syntax
+                new ABParserToken("SingleQuoteString", '\''),
                 new ABParserToken("DoubleQuoteString", '"'),
 
                 // Numbers
@@ -115,20 +119,30 @@ namespace ABSoftware.Engine.Testing
                 new ABParserToken("Numerical7", '7'),
                 new ABParserToken("Numerical8", '8'),
                 new ABParserToken("Numerical9", '9'),
+
+                // Comments
+                new ABParserToken("SingleLineComment", '/', '/'),
+                new ABParserToken("MultiLineCommentStart", '/', '*'),
+                new ABParserToken("MultiLineCommentEnd", '*', '/')
                 //new ABParserToken("public", 'p', 'u', 'b', 'l', 'i', 'c'),
                 //new ABParserToken("static", 's', 't', 'a', 't', 'i', 'c'),
                 //new ABParserToken("void", 'v', 'o', 'i', 'd'),
             };
+
+            // Set all the delimiters for C# - to allow keyword detection to work better.
+            Delimiters = new char[] { ';', ',', '.', '+', '-', '*', '/', '=', '%', '\'', '"', '[', ']', '{', '}', '(', ')' };
         }
 
         public override bool NotifyCharacterProcessed => true;
 
         public bool InString = false;
+        public bool InComment = false;
         public TextPointer ActualStart;
 
         protected override void OnStart()
         {
             InString = false;
+            InComment = false;
         }
 
         //protected override void OnCharacterProcessed(char ch)
@@ -142,8 +156,25 @@ namespace ABSoftware.Engine.Testing
         {
             base.BeforeTokenProcessed(token);
 
+            // If this line is already highlighted (usually comments), don't bother with highlighting it.
+            if (LineHighlighted)
+                return;
+
+            // If we're in a multi-line comment, then color it and exit it - since this token can only be a multi-line comment ending, because of the limit.
+            if (InComment)
+            {
+                // Set the start to where the comment actually started - but, go back one if needed
+                TextBox.StartPointer = ActualStart;
+
+                // Color it in the green colour.
+                Highlight(Color.FromArgb(255, 87, 166, 74));
+
+                // Exit the comment
+                InComment = false;
+            }
+
             // If we're in a string, then color it and exit it - since this token can only be a string because of the limit.
-            if (InString)
+            else if (InString)
             {
                 // Set the start to where the string actually started.
                 TextBox.StartPointer = ActualStart;
@@ -162,23 +193,39 @@ namespace ABSoftware.Engine.Testing
 
                     // Highlight the number YellowGreen.
                     Highlight(Colors.YellowGreen);
-                else if (token.Name == "DoubleQuoteString") // String
+                else if (token.Name.EndsWith("String")) // String/Char
                 {
 
                     // Set a limit so that only the string token matters and make sure that limit expires at the next string token.
                     TokenLimit = new System.Collections.ObjectModel.ObservableCollection<char[]>() { token.Token };
                     LimitAffectsNextTrailing = false;
 
-                    // Make sure that we keep hold of the current TextPointer - so that we can use it as the start of the string.
-                    ActualStart = TextBox.CurrentPointer.GetNextInsertionPosition(LogicalDirection.Backward);
+                    // Make sure that we keep hold of the current StartPointer - so that we can use it as the start of the string.
+                    ActualStart = TextBox.StartPointer;
 
                     // Mark us as being in a string, so that the next time it can apply it!
                     InString = true;
                 }
 
-                // Highlight it blue... But only count it if it has whitespace before and after it!
-                else if ((PossibleTokenStart == 0 || char.IsWhiteSpace(Text[PossibleTokenStart - 1])) && 
-                    (CurrentLocation < Text.Length || char.IsWhiteSpace(Text[CurrentLocation + 1])))
+                else if (token.Name == "SingleLineComment") // Single Line Comment
+                    HighlightLine(Color.FromArgb(255, 87, 166, 74));
+
+                else if (token.Name == "MultiLineCommentStart") // Multi-Line Comment
+                {
+                    // Set a limit so that only the multi-line comment ending token matters.
+                    TokenLimit = new System.Collections.ObjectModel.ObservableCollection<char[]>() { new char[]{ '*', '/' } };
+                    LimitAffectsNextTrailing = false;
+
+                    // Make sure that we keep hole the current StartPointer - so that we can use it as the start of the multi-line comment.
+                    ActualStart = TextBox.StartPointer;
+
+                    // Mark us as being in a multi-line comment, so that the next time it will finish the comment!
+                    InComment = true;
+                }
+
+                // Highlight it blue - but only if there's whitespace around it, or
+                // a null character after, meaning it's the end of a run (this stops things like "int in = 0")
+                else if (SurroundedByWhiteSpaceOrDelimiter())
 
                     // Color it blue!
                     Highlight(Colors.Blue);

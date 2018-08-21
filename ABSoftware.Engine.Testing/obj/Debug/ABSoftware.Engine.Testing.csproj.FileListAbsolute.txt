@@ -34,3 +34,21 @@ C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\AB
 C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.exe
 C:\Users\alexb\OneDrive\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.pdb
 I:\Desktop\Main Code\ABSoftware\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABParse.dll
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe.config
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.exe
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.Testing.pdb
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABParse.dll
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.dll
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\bin\Debug\ABSoftware.Engine.pdb
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csprojResolveAssemblyReference.cache
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.g.cs
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\App.g.cs
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.cache
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing_MarkupCompile.lref
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\MainWindow.baml
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.g.resources
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.Properties.Resources.resources
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.GenerateResource.Cache
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.csproj.CoreCompileInputs.cache
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.exe
+C:\Users\alexb\Documents\ABSoftware.Engine\ABSoftware.Engine.Testing\obj\Debug\ABSoftware.Engine.Testing.pdb

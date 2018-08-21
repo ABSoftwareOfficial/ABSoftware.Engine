@@ -19,15 +19,16 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
-
-        <RichTextBox x:Name="txtCode" Grid.Column="1" FontSize="16" FontFamily="Consolas" TextBox.TextChanged="TextBox_TextChanged" KeyDown="txtCode_KeyDown" ScrollViewer.HorizontalScrollBarVisibility="Visible"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.ScrollChanged="txtCode_ScrollChanged">
+        
+        <RichTextBox x:Name="txtCode" Grid.Column="1" FontSize="16" FontFamily="Consolas" TextBox.TextChanged="TextBox_TextChanged" KeyDown="txtCode_KeyDown" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.ScrollChanged="txtCode_ScrollChanged">
             <RichTextBox.Resources>
-                <!-- The Paragraph Style - More... TextBox-y -->
+                <!-- Make the paragraphs look more like a normal TextBox. -->
                 <Style TargetType="{x:Type Paragraph}">
                     <Setter Property="Margin" Value="0"/>
                 </Style>
             </RichTextBox.Resources>
 
+            <FlowDocument PageWidth="999999"/>
         </RichTextBox>
     </Grid>
 </UserControl>
